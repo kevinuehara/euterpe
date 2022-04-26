@@ -7,7 +7,7 @@ import AlbumPlayer from "./AlbumPlayer";
 import Header from "./Header";
 import Option from "./Option";
 
-const BASE_URL = "http://localhost:3000/api";
+const BASE_URL = "https://euterpe.vercel.app/api";
 const EUTERPE_SCORE_LS = 'euterpe_score';
 const EUTERPE_DATE_LS = 'euterpe_date';
 
