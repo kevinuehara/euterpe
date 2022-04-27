@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { gray20, red50, green50 } from "../styles/colors";
+import { gray20, red50, green50, slate60 } from "../styles/colors";
 import { correctIcon, wrongIcon } from "./icons";
 
 interface OptionProps {
@@ -9,7 +9,6 @@ interface OptionProps {
   songName: string;
   isPlaying: boolean;
   finished: boolean;
-  started: boolean;
   onSelectOption: (artist: string, isCorrect: boolean) => void;
 }
 
@@ -39,7 +38,7 @@ const Icon = styled.div`
 
 const OptionSpan = styled.span`
   padding-left: 10px;
-  color: ${(props) => (!props.started ? "white" : "black")};
+  color: ${slate60};
 `;
 
 export default function Option({
@@ -48,7 +47,6 @@ export default function Option({
   isCorrect,
   isRevealed,
   isPlaying,
-  started,
   onSelectOption,
   finished
 }: OptionProps) {
@@ -57,7 +55,6 @@ export default function Option({
     <OptionContainer finished={finished} onClick={() => onSelectOption(artist, isCorrect)}>
       <div>
         <OptionSpan
-          started={started}
         >{`${artist} - ${songName}`}</OptionSpan>
       </div>
       <div>

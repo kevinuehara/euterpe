@@ -23,7 +23,7 @@ export default function Home() {
     <Container>
       <Head>
         <title>Euterpe</title>
-        <meta name="description" content="Jogo para adivinhar musica" />
+        <meta name="description" content="A Euterpe é um jogo para adivinhação de músicas diárias" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
 

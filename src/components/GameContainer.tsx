@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
+import { finished } from "stream";
 import styled from "styled-components";
 import AlbumCover from "../components/AlbumCover";
 import Timer from "../components/Timer";
@@ -6,10 +7,11 @@ import { DailyTrackingResponse } from "../models/tracking";
 import AlbumPlayer from "./AlbumPlayer";
 import Header from "./Header";
 import Option from "./Option";
+import { lime30, purple90, red50 } from "../styles/colors";
 
 const BASE_URL = process.env.NEXT_PUBLIC_HOST_API;
-const EUTERPE_SCORE_LS = 'euterpe_score';
-const EUTERPE_DATE_LS = 'euterpe_date';
+const EUTERPE_SCORE_LS = "euterpe_score";
+const EUTERPE_DATE_LS = "euterpe_date";
 
 const Container = styled.div`
   display: flex;
@@ -17,8 +19,10 @@ const Container = styled.div`
   margin-top: 50px;
   width: 100vw;
 
+
   @media (max-width: 700px) {
     flex-direction: row;
+    margin-top: 0;
   }
 `;
 
@@ -61,10 +65,10 @@ const MessageContainer = styled.div`
   height: 100vh;
 `;
 
-const Message= styled.h1`
+const Message = styled.h1`
   font-size: ${(props) => (props.$title ? "25px" : "15px")};
   font-weight: ${(props) => (props.$title ? "bold" : "500")};
-  color: white;
+  color: ${(props) => props.$color};
 `;
 
 export default function GameContainer() {
@@ -79,6 +83,8 @@ export default function GameContainer() {
   const [previousScore, setPreviousScore] = useState(0);
 
   const [alreadyPlayed, setAlreadyPlayed] = useState(false);
+
+  const [correctChoice, setCorrectChoice] = useState(false);
 
   const audioRef = useRef<HTMLAudioElement>();
 
@@ -106,10 +112,8 @@ export default function GameContainer() {
 
   const validatePlayerAlreadyPlayed = () => {
     if (localStorage.getItem(EUTERPE_DATE_LS)) {
-      const dateLocalStorage = new Date(
-        localStorage.getItem(EUTERPE_DATE_LS)
-      ).toISOString();
-      const today = new Date(new Date().setUTCHours(0, 0, 0, 0)).toISOString();
+      const dateLocalStorage = localStorage.getItem(EUTERPE_DATE_LS);
+      const today = new Date().toDateString();
 
       if (dateLocalStorage === today) {
         setAlreadyPlayed(true);
@@ -143,13 +147,14 @@ export default function GameContainer() {
 
   const onSelectOption = (artist: string, isCorrect: boolean) => {
     if (isStarted) {
-    setIsRevealed(true);
-    setIsFinished(true);
-    setIsPlaying(false);
-    saveScoreLocalStorage(isCorrect);
-    finishMatch();
-    audioRef.current.pause();
-    audioRef.current.currentTime = 0;
+      setIsRevealed(true);
+      setIsFinished(true);
+      setIsPlaying(false);
+      saveScoreLocalStorage(isCorrect);
+      setCorrectChoice(isCorrect);
+      finishMatch();
+      audioRef.current.pause();
+      audioRef.current.currentTime = 0;
     }
   };
 
@@ -161,24 +166,45 @@ export default function GameContainer() {
   };
 
   const finishMatch = () => {
-    const today = new Date(new Date().setUTCHours(0, 0, 0, 0));
-    localStorage.setItem(EUTERPE_DATE_LS, today.toISOString());
+    const today = new Date().toDateString();
+    localStorage.setItem(EUTERPE_DATE_LS, today.toString());
   };
 
   const onUpdateRemainingTime = (time: number) => {
     setTime(time);
   };
 
+  const renderFeedbackOnFinishMatch = () => {
+    if (isFinished) {
+      if (correctChoice) {
+        return (
+          <div>
+            <Message $title $color={lime30}>{`Você Acertou!`}</Message>
+            <Message $color="white">{`Sua pontuação: ${localStorage.getItem(EUTERPE_SCORE_LS) || 0}!`}</Message>
+          </div>
+        );
+      } else {
+        return (<div>
+          <Message $title $color={red50}>{`Você Errou :(`}</Message>
+          <Message $color="white">{`Sua pontuação: ${localStorage.getItem(EUTERPE_SCORE_LS) || 0}!`}</Message>
+        </div>);
+      }
+    } else {
+      return <Message $title $color="white">{`Descubra a música:`}</Message>;
+    }
+  };
+
   return (
-    <div >
+    <div>
       {alreadyPlayed ? (
-        <div >
-        <MessageContainer>
-          <Message
-            $title
-          >{`Você já jogou hoje meu rei!`}</Message>
-          <Message>{`Volte amanhã pra mais um sonzinho`}</Message>
-        </MessageContainer>
+        <div>
+          <MessageContainer>
+            <Message $title $color="white">{`Você já jogou hoje bb`}</Message>
+            <Message $color="white">{`Volte amanhã pra mais um sonzinho`}</Message>
+            <Message $color={purple90}>{`Sua Pontuação: ${
+              localStorage.getItem(EUTERPE_SCORE_LS) || 0
+            }`}</Message>
+          </MessageContainer>
         </div>
       ) : (
         <Content>
@@ -202,7 +228,7 @@ export default function GameContainer() {
                 />
 
                 <OptionsContainer>
-                <Message $title>{`Descubra a música:`}</Message>
+                { renderFeedbackOnFinishMatch() }
                   {track.answers.map((option) => {
                     return (
                       <Option
@@ -214,7 +240,6 @@ export default function GameContainer() {
                         isPlaying={isPlaying}
                         onSelectOption={onSelectOption}
                         finished={isFinished}
-                        started={isStarted}
                       />
                     );
                   })}

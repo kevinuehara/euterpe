@@ -5,3 +5,5 @@ export const purple50 = '#a855f7';
 export const purple30 = '#e9d5ff';
 export const red50 = '#ef4444';
 export const green50 = '#22c55e';
+export const lime30 = '#bef264';
+export const slate60 = '#475569';

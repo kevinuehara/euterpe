@@ -9,16 +9,15 @@ export default class AlbumService {
     return await db.collection("albums").insertOne({
       name: "kevin",
       age: 22,
-      createdAt: new Date().toISOString(),
+      createdAt: new Date().toDateString(),
     });
   }
 
   static async getDailyAlbum(db: Db): Promise<TrackingModel> {
-    // 2022-04-26T00:00:00.000Z
-    const today = new Date(new Date().setUTCHours(0, 0, 0, 0));
+    const today = new Date().toDateString();
     const response = await db
       .collection("albums")
-      .findOne({ gameDate: today.toISOString() });
+      .findOne({ gameDate: today });
     return AlbumService.transformToObject(response);
   }
 
