@@ -8,10 +8,10 @@ import AlbumService from "../../service/album";
 import ConfigService from "../../service/config";
 
 
-export default async (
+export default async function daily (
   req: NextApiRequest,
   res: NextApiResponse<TrackingModel | MessageError>
-): Promise<void> => {
+): Promise<void> {
   const { db } = await connect();
 
     if(req.method === 'GET') {

@@ -6,10 +6,10 @@ import ConfigService from "../../service/config";
 
 const ID_CONFIG_COLLECTION = 'collection_config';
 
-export default async (
+export default async function album (
   req: NextApiRequest,
   res: NextApiResponse<any>
-): Promise<void> => {
+): Promise<void> {
   const { db } = await connect();
 
     if (req.method === 'POST') {
@@ -18,7 +18,7 @@ export default async (
       if (updatedStatus && updatedStatus.status?.acknowledged) {
         const response = await AlbumService.saveAlbum(db);
 
-        /** TODO: pegar dados do body para inserir no banco */
+        /** TODO: pegar dados do body para inserts no banco */
 
         res.status(200).json(response);
         return;
@@ -31,7 +31,6 @@ export default async (
       res.status(404).json({message: 'Error'});
     }
 };
-
 
 
 

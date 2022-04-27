@@ -3,10 +3,10 @@ import { MessageError } from "../../models/messageError";
 import { DailyTrackingResponse } from "../../models/tracking";
 import TrackService from "../../service/track";
 
-export default async (
+export default async function track (
     req: NextApiRequest,
     res: NextApiResponse<DailyTrackingResponse | MessageError>
-  ): Promise<void> => {
+  ): Promise<void>  {
   
     try {
         const trackService = new TrackService();

@@ -1,8 +1,8 @@
 import querystring from 'querystring';
 
-const client_id = 'c747c6e13c3045f0b05db0f26c29c21b';
-const client_secret = 'c3f1724b1f9e4a79b820625204025719';
-const refresh_token = 'AQAjUk0LP6wb5wBg6x6frGGV_okYNJLc5sHyvz2vUI3Z39FM82Pd0z1erAhmySkQO5AJWTUFmjEtyLfbJt4ozLfNAzwzrdfiheBfBsomFKgUNEm0YAGJzO4HHANKCZerslY';
+const client_id = process.env.SPOTIFY_CLIENT_ID;
+const client_secret = process.env.SPOTIFY_CLIENT_SECRET;
+const refresh_token = process.env.SPOTIFY_REFRESH_TOKEN;
 
 const basic = Buffer.from(`${client_id}:${client_secret}`).toString('base64');
 const TOKEN_ENDPOINT = `https://accounts.spotify.com/api/token`;
@@ -22,7 +22,6 @@ const getAccessToken = async () => {
 
   return response.json();
 };
-
 
 const TOP_TRACKS_ENDPOINT = `https://api.spotify.com/v1/me/top/tracks?market=PT`;
 
