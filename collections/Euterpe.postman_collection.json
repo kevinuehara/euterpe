@@ -1,0 +1,39 @@
+{
+	"info": {
+		"_postman_id": "d02ac098-9f35-451e-a5ba-f4e09e05e539",
+		"name": "Euterpe",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Save Track",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"gameDate\": \"Wed Apr 28 2022\",\n  \"answers\": [\n    {\n      \"artist\": \"Jão\",\n      \"isCorrect\": false,\n      \"songName\": \"Santo\"\n    },\n    {\n      \"artist\": \"Terno rei\",\n      \"isCorrect\": true,\n      \"songName\": \"Esperando você\"\n    },\n    {\n      \"artist\": \"Falamansa\",\n      \"isCorrect\": false,\n      \"songName\": \"Xote de Alegria\"\n    },\n    {\n      \"artist\": \"Fresno\",\n      \"isCorrect\": false,\n      \"songName\": \"Natureza Caos\"\n    },\n    {\n      \"artist\": \"O Grilo\",\n      \"isCorrect\": false,\n      \"songName\": \"Sambinha\"\n    }\n  ],\n  \"trackId\": \"teste\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://euterpe.vercel.app/api/album",
+					"protocol": "https",
+					"host": [
+						"euterpe",
+						"vercel",
+						"app"
+					],
+					"path": [
+						"api",
+						"album"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

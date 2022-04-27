@@ -14,13 +14,13 @@ export default class ConfigService {
   static async updateConfig(db: Db) {
     const { lastDate } = await ConfigService.getConfig(db);
     let dateToUpdate = this.incrementOneDay(lastDate);
-    dateToUpdate = new Date(dateToUpdate.setUTCHours(0,0,0,0));
+    dateToUpdate = new Date(dateToUpdate);
 
     const response = await db
       .collection("config")
       .updateOne(
         { id: ConfigService.ID_CONFIG_COLLECTION },
-        { $set: { lastDate: dateToUpdate.toISOString() } }
+        { $set: { lastDate: dateToUpdate.toDateString() } }
       );
 
     return { status: response, dateToUpdate, lastDate };
