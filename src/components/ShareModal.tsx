@@ -19,7 +19,7 @@ const style = {
   },
 };
 
-export default function ShareModal({ isOpen, onCloseModal, number }: ExportModalProps) {
+export default function ShareModal({ isOpen, onCloseModal }: ExportModalProps) {
   return (
     <Modal
       ariaHideApp={false}
