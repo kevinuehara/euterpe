@@ -1,13 +1,15 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { finished } from "stream";
 import styled from "styled-components";
-import AlbumCover from "../components/AlbumCover";
 import Timer from "../components/Timer";
 import { DailyTrackingResponse } from "../models/tracking";
 import AlbumPlayer from "./AlbumPlayer";
 import Header from "./Header";
 import Option from "./Option";
-import { lime30, purple90, red50 } from "../styles/colors";
+import { purple90, purple70 } from "../styles/colors";
+import FeedbackScore from "./FeedbackScore";
+
+import { useAlert } from "react-alert";
+import { shareIcon } from "./icons";
 
 const BASE_URL = process.env.NEXT_PUBLIC_HOST_API;
 const EUTERPE_SCORE_LS = "euterpe_score";
@@ -18,7 +20,6 @@ const Container = styled.div`
   align-items: center;
   margin-top: 50px;
   width: 100vw;
-
 
   @media (max-width: 700px) {
     flex-direction: row;
@@ -51,6 +52,7 @@ const Content = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
+  height: 100vh;
 
   @media (min-width: 700px) {
     height: 100vh;
@@ -71,6 +73,35 @@ const Message = styled.h1`
   color: ${(props) => props.$color};
 `;
 
+const Icon = styled.div`
+  width: 1.7rem;
+  height: 1.7rem;
+  margin-left: 5px;
+
+  &:hover {
+    cursor: pointer;
+  }
+`;
+
+const ShareButton = styled.button`
+  color: ${purple90};
+  margin-left: 15px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 8px;
+  font-weight: 700;
+  color: #fff;
+  background-color: ${purple90};
+  border: none;
+  border-radius: 5px;
+
+  &:hover {
+    cursor: pointer;
+    background-color: ${purple70};
+  }
+`;
+
 export default function GameContainer() {
   const [track, setTrack] = useState<DailyTrackingResponse>(null);
   const [rendered, setRendered] = useState(false);
@@ -86,7 +117,10 @@ export default function GameContainer() {
 
   const [correctChoice, setCorrectChoice] = useState(false);
 
+  const [isShareModalOpen, setIsShareModalOpen] = useState(false);
+
   const audioRef = useRef<HTMLAudioElement>();
+  const alert = useAlert();
 
   const loadDailyTrack = useCallback(async () => {
     const response = await fetch(`${BASE_URL}/tracks`);
@@ -174,21 +208,23 @@ export default function GameContainer() {
     setTime(time);
   };
 
+  const showAlertCopyClipboard = (message: string) => {
+    navigator.clipboard.writeText(message);
+    alert.success("Copiado para área de transferência");
+  };
+
   const renderFeedbackOnFinishMatch = () => {
     if (isFinished) {
-      if (correctChoice) {
-        return (
-          <div>
-            <Message $title $color={lime30}>{`Você Acertou!`}</Message>
-            <Message $color="white">{`Sua pontuação: ${localStorage.getItem(EUTERPE_SCORE_LS) || 0}!`}</Message>
-          </div>
-        );
-      } else {
-        return (<div>
-          <Message $title $color={red50}>{`Você Errou :(`}</Message>
-          <Message $color="white">{`Sua pontuação: ${localStorage.getItem(EUTERPE_SCORE_LS) || 0}!`}</Message>
-        </div>);
-      }
+      return (
+        <FeedbackScore
+          showAlertCopyClipboard={() =>
+            showAlertCopyClipboard(`
+          Joguei Euterpe! Descobri a música de hoje em ${time} segundos! Joga aí também, camarada: https://euterpe.vercel.app/
+      `)
+          }
+          isCorrect={correctChoice}
+        />
+      );
     } else {
       return <Message $title $color="white">{`Descubra a música:`}</Message>;
     }
@@ -201,6 +237,18 @@ export default function GameContainer() {
           <MessageContainer>
             <Message $title $color="white">{`Você já jogou hoje bb`}</Message>
             <Message $color="white">{`Volte amanhã pra mais um sonzinho`}</Message>
+            <ShareButton
+              onClick={() =>
+                showAlertCopyClipboard(`
+        Joguei Euterpe! Minha pontuação até agora é de ${
+          localStorage.getItem(EUTERPE_SCORE_LS) || 0
+        } pontos! Joga aí também, camarada: https://euterpe.vercel.app/
+    `)
+              }
+            >
+              {`Compartilhar Resultado`}
+              <Icon>{shareIcon}</Icon>
+            </ShareButton>
             <Message $color={purple90}>{`Sua Pontuação: ${
               localStorage.getItem(EUTERPE_SCORE_LS) || 0
             }`}</Message>
@@ -228,7 +276,7 @@ export default function GameContainer() {
                 />
 
                 <OptionsContainer>
-                { renderFeedbackOnFinishMatch() }
+                  {renderFeedbackOnFinishMatch()}
                   {track.answers.map((option) => {
                     return (
                       <Option
