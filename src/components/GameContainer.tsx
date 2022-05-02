@@ -213,14 +213,29 @@ export default function GameContainer() {
     alert.success("Copiado para área de transferência");
   };
 
+  const handleMessageToClipboard = (): string => {
+    if (!correctChoice) {
+      return `
+        Joguei Euterpe! Minha pontuação até agora é de ${
+          localStorage.getItem(EUTERPE_SCORE_LS) || 0
+        } Joga aí também, camarada: https://euterpe.vercel.app/
+      `;
+    } 
+
+    return `
+      Joguei Euterpe! Descobri a música de hoje em ${time} segundos! Minha pontuação até agora é de ${
+        localStorage.getItem(EUTERPE_SCORE_LS) || 0
+      } Joga aí também, camarada: https://euterpe.vercel.app/
+    `;
+
+  };
+
   const renderFeedbackOnFinishMatch = () => {
     if (isFinished) {
       return (
         <FeedbackScore
           showAlertCopyClipboard={() =>
-            showAlertCopyClipboard(`
-          Joguei Euterpe! Descobri a música de hoje em ${time} segundos! Joga aí também, camarada: https://euterpe.vercel.app/
-      `)
+            showAlertCopyClipboard(handleMessageToClipboard())
           }
           isCorrect={correctChoice}
         />
